@@ -7,7 +7,30 @@ export class LoginPage extends BasePage {
     await this.page.fill('input[type=email]', email);
     await this.page.click('button[type=submit]');
     await this.page.fill('input[type=password]', password);
-    await Promise.all([
+    await this.submit();
+  }
+
+  async loginWithRecoveryCode(
+    email: string,
+    password: string,
+    recoveryCode: string
+  ) {
+    await this.login(email, password);
+    await this.clickUseRecoveryCode();
+    await this.setRecoveryCode(recoveryCode);
+    await this.submit();
+  }
+
+  async clickUseRecoveryCode() {
+    return this.page.click('#use-recovery-code-link');
+  }
+
+  async setRecoveryCode(code: string) {
+    return this.page.fill('input[type=text]', code);
+  }
+
+  async submit() {
+    return Promise.all([
       this.page.click('button[type=submit]'),
       this.page.waitForNavigation({ waitUntil: 'networkidle' }),
     ]);

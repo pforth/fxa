@@ -24,8 +24,12 @@ export class TotpPage extends BasePage {
     ]);
   }
 
-  getRecoveryCode() {
-    return this.page.innerText('[data-testid=datablock] span:nth-child(1)');
+  async getRecoveryCodes(): Promise<string[]> {
+    await this.page.waitForSelector('[data-testid=datablock]');
+    // @ts-ignore
+    return this.page.$$eval('[data-testid=datablock] span', (elements) =>
+      elements.map((el) => el.innerText)
+    );
   }
 
   setRecoveryCode(code: string) {

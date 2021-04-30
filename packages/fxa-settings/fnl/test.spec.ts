@@ -1,4 +1,5 @@
 import { test, multiTest, expect } from './config';
+import { EmailType } from './lib/env/email';
 
 test('set the display name', async ({ pages: { settings, displayName } }) => {
   await settings.goto();
@@ -57,9 +58,9 @@ test('add and remove totp', async ({ pages: { settings, totp } }) => {
   await settings.totp.clickAdd();
   await totp.setSecurityCode();
   await totp.submit();
-  const recoveryCode = await totp.getRecoveryCode();
+  const recoveryCodes = await totp.getRecoveryCodes();
   await totp.submit();
-  await totp.setRecoveryCode(recoveryCode);
+  await totp.setRecoveryCode(recoveryCodes[0]);
   await totp.submit();
   await settings.waitForAlertBar();
   status = await settings.totp.statusText();
@@ -68,6 +69,48 @@ test('add and remove totp', async ({ pages: { settings, totp } }) => {
   await settings.clickModalConfirm();
   status = await settings.totp.statusText();
   expect(status).toEqual('Not set');
+});
+
+test('can get new recovery codes via email', async ({
+  env,
+  credentials,
+  page,
+  pages: { login, settings, totp },
+}) => {
+  await settings.goto();
+  await settings.totp.clickAdd();
+  await totp.setSecurityCode();
+  await totp.submit();
+  const recoveryCodes = await totp.getRecoveryCodes();
+  await totp.submit();
+  await totp.setRecoveryCode(recoveryCodes[0]);
+  await totp.submit();
+  await settings.logout();
+  for (let i = 0; i < recoveryCodes.length - 3; i++) {
+    await login.loginWithRecoveryCode(
+      credentials.email,
+      credentials.password,
+      recoveryCodes[i]
+    );
+    await settings.logout();
+  }
+  await login.loginWithRecoveryCode(
+    credentials.email,
+    credentials.password,
+    recoveryCodes[recoveryCodes.length - 1]
+  );
+  const msg = await env.email.waitForEmail(
+    credentials.email,
+    EmailType.lowRecoveryCodes
+  );
+  const link = msg.headers['x-link'] as string;
+  await page.goto(link, { waitUntil: 'networkidle' });
+  const newCodes = await totp.getRecoveryCodes();
+  expect(newCodes.length).toEqual(recoveryCodes.length);
+
+  await settings.goto();
+  await settings.totp.clickDisable();
+  await settings.clickModalConfirm();
 });
 
 multiTest('disconnect RP', async ({ credentials, browsers: [a, b] }) => {
