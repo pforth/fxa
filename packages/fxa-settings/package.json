@@ -18,7 +18,10 @@
     "test": "SKIP_PREFLIGHT_CHECK=true rescripts test"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
@@ -55,7 +58,7 @@
     "react-dom": "^16.13.1",
     "react-easy-crop": "^3.3.3",
     "react-hook-form": "^6.15.5",
-    "react-scripts": "^3.4.1",
+    "react-scripts": "^4.0.3",
     "react-webcam": "^5.2.2",
     "subscriptions-transport-ws": "^0.9.18",
     "typescript": "3.9.7",

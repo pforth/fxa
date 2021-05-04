@@ -1,4 +1,6 @@
-@import '../../fxa-content-server/app/styles/main';
+@import '../../fxa-content-server/app/styles/_variables';
+@import '../../fxa-content-server/app/styles/_mixins';
+@import '../../fxa-content-server/app/styles/_breakpoints';
 @import './styles/mixins';
 @import './styles/variables';
 
