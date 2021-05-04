@@ -1,6 +1,7 @@
 SET NAMES utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS recoveryCodes (
+  id INT PRIMARY KEY,
   uid BINARY(16) NOT NULL,
   codeHash BINARY(64) NOT NULL,
   createdAt BIGINT UNSIGNED NOT NULL,

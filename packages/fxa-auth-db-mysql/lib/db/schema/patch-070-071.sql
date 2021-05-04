@@ -1,11 +1,10 @@
 SET NAMES utf8mb4 COLLATE utf8mb4_bin;
 
 CREATE TABLE IF NOT EXISTS totp (
-  uid BINARY(16) NOT NULL,
+  uid BINARY(16) NOT NULL PRIMARY KEY, -- Changed key from unique to primary..making assumption uid is never set to null
   sharedSecret VARCHAR(80) NOT NULL,
   epoch BIGINT NOT NULL,
-  createdAt BIGINT UNSIGNED NOT NULL,
-  UNIQUE KEY (`uid`)
+  createdAt BIGINT UNSIGNED NOT NULL
 ) ENGINE=InnoDB;
 
 CREATE PROCEDURE `createTotpToken_1` (

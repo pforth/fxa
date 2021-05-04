@@ -11,6 +11,7 @@ CREATE TABLE eventLog (
 
 -- A new table to hold metadata about what events have been published.
 CREATE TABLE eventLogPublishState (
+  id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   lastPublishedPos BIGINT UNSIGNED NOT NULL,
   lastPublishedAt INT UNSIGNED NOT NULL
 ) ENGINE=InnoDB;

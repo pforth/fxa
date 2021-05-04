@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS securityEventNames (
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS securityEvents (
-  uid BINARY(16) NOT NULL,
+  uid BINARY(16) NOT NULL PRIMARY KEY,
   nameId INT NOT NULL,
   FOREIGN KEY (nameId) REFERENCES securityEventNames(id) ON DELETE CASCADE,
   tokenId BINARY(32),
