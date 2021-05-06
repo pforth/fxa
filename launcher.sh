@@ -36,7 +36,7 @@ else
     node server/bin/fxa-content-server.js
   elif [ $server = "fxa-customs-server" ]
   then
-    cd fxa-customers-server
+    cd fxa-customs-server
     node bin/customs_server.js
   elif [ $server = "fxa-auth-server" ]
   then
@@ -53,7 +53,7 @@ else
     node server.js
   elif [ $server = "browserid-verifier" ]
   then
-    cd fxa-browserid-verifier
+    cd browserid-verifier
     node server.js
   elif [ $server = "123done" ]
   then
