@@ -11,7 +11,8 @@ const version = require('./version');
 const logger = morgan('short');
 
 // create a connection to the redis datastore
-let db = redis.createClient();
+let redisHost=process.env['REDIS_HOST'] || '127.0.0.1';
+let db = redis.createClient({host:redisHost});
 
 db.on('error', function () {
   // eslint-disable-line handle-callback-err
