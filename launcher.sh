@@ -8,22 +8,22 @@ then
 else 
   echo "Running $server"
   cd packages
-  if [ $server = "fxa-profile-server" ]
-  then
-    cd fxa-profile-server
-    node bin/server.js
-  elif [ $server = "fxa-payments-server-worker" ]
-  then
-    cd fxa-profile-server
-    node bin/worker.js
-  elif [ $server = "fxa-payments-server-static" ]
-  then
-    cd fxa-profile-server
-    node bin/_static.js
-  elif [ $server = "fxa-payments-server" ]
+  if [ $server = "fxa-payments-server" ]
   then
     cd fxa-payments-server
     node server/bin/fxa-payments-server.js
+  elif [ $server = "fxa-profile-server" ]
+  then
+    cd fxa-profile-server
+    node bin/server.js
+  elif [ $server = "fxa-profile-server-worker" ]
+  then
+    cd fxa-profile-server
+    node bin/worker.js
+  elif [ $server = "fxa-profile-server-static" ]
+  then
+    cd fxa-profile-server
+    node bin/_static.js
   elif [ $server = "fxa-graphql-api" ]
   then
     cd fxa-graphql-api
@@ -47,6 +47,10 @@ else
     cd fxa-auth-db-mysql
     node bin/db_patcher.js
     node bin/server.js
+  elif [ $server = "fortress" ]
+  then
+    cd fortress
+    node server.js
   elif [ $server = "browserid-verifier" ]
   then
     cd fxa-browserid-verifier
@@ -54,14 +58,10 @@ else
   elif [ $server = "123done" ]
   then
     cd 123done
-    export CONFIG_123DONE="./config-local.json"
-    export PORT="8080"
     node server.js
   elif [ $server = "321done" ]
   then
-    cd 321done
-    export CONFIG_123DONE="./config-local-untrusted.json"
-    export PORT="10139"
+    cd 123done
     node server.js
   elif [ $server = "debug" ]
   then
