@@ -18,8 +18,8 @@ data:
   WORKER_HOST: "0.0.0.0"
   WORKER_PORT: "1113"
   WORKER_URL: http://fxa-auth-server-service:1113
-  AWS_ACCESS_KEY_ID: AKIATDJGRIWMGNMG4GRR
-  AWS_SECRET_ACCESS_KEY: "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"
+  AWS_ACCESS_KEY_ID: zzzzzzzzzzzzzzzzzzz
+  AWS_SECRET_ACCESS_KEY: "xxxxxxxxxxxxxxxxxxxxx"
   EVENTS_REGION: us-west-2
   EVENTS_QUEUE_URL: https://sqs.us-west-2.amazonaws.com/213218575768/fxa-profile-server-events.fifo
   PROFILE_UPDATES_REGION: us-west-2
