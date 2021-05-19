@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: ConfigMap 
+metadata:
+  name: fxa-payments-server-configmap 
+data:
+  # Configuration values can be set as key-value properties
+  server: fxa-payments-server
+  PUBLIC_URL: http://fxa-payments-service:3031
+  USE_TLS: "false" #  (https)
+  IP_ADDRESS: "0.0.0.0"
+  PORT: "3031"
+  PAYMENT_PRIVACY_NOTICE: https://www.mozilla.org/privacy/firefox-private-network
+  PAYMENT_TERMS_OF_SERVICE: https://www.mozilla.org/about/legal/terms/firefox-private-network
+  PAYMENT_LEGAL_DOWNLOAD_FQDN: accounts-static.cdn.mozilla.net
+  AUTH_SERVER_URL: http://fxa-auth-service:9000
+  CONTENT_SERVER_URL: http://localhost:3030
+  OAUTH_SERVER_URL: http://fxa-auth-service:9000
+  PROFILE_SERVER_URL: http://fxa-profile-service:1111
+  FXA_PROFILE_IMAGES_URL: http://fxa-profile-service-static:1112
+  FXA_STATIC_CDN_URL: https://accounts-static.cdn.mozilla.net
+  SURVEY_GIZMO_EMBED_URL: https://www.surveygizmo.com
+  STATIC_RESOURCE_URL: http://fxa-payments-service:3031
+  DD_AGENT_HOST: "localhost"  # StatsD server?
+  DD_DOGSTATSD_PORT: "8125"
+  PAYPAL_CLIENT_ID: ""
+  PAYPAL_API_URL: https://www.sandbox.paypal.com
+  PAYPAL_SCRIPT_URL: https://www.paypal.com
+  STRIPE_API_KEY: pk_test_XXXXXXXXXXXXXXXXXXXX
+  STRIPE_API_URL: https://api.stripe.com
+  STRIPE_HOOKS_URL: https://hooks.stripe.com
+  STRIPE_SCRIPT_URL: https://js.stripe.com
+  SENTRY_DSN: ""
+  SENTRY_URL: https://sentry.prod.mozaws.net/444
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fxa-payments-server
+  labels:
+    type: fxa-payments-server
+spec:
+  selector:
+    matchLabels:
+      app: fxa-payments-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fxa-payments-server
+    spec:
+      containers:
+      - name: fxa-payments-server
+        image: peteroffthestrip/fxa:1.0.4
+        ports:
+        - containerPort: 3031
+        envFrom:
+        - configMapRef:
+            name: root-configmap
+        - configMapRef:
+            name: fxa-payments-server-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fxa-payments-server-service
+spec:
+  selector:
+    app: fxa-payments-server
+  ports:
+  - port: 3031
+    targetPort: 3031
+    

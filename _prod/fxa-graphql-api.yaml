@@ -1,0 +1,119 @@
+apiVersion: v1
+kind: ConfigMap 
+metadata:
+  name: fxa-graphql-api-configmap 
+data:
+  # Configuration values can be set as key-value properties
+  server: fxa-graphql-api
+  AUTH_SERVER_URL: http://fxa-auth-service:9000/v1
+  CORS_ORIGIN: http://accounts.firefox.com/
+  CUSTOMS_SERVER_URL: http://fxa-customs-service:7000
+  PROFILE_SERVER_URL: http://fxa-profile-service:1111/v1
+  ACCESS_TOKEN_REDIS_HOST: redis-service
+  ACCESS_TOKEN_REDIS_PORT: "6379"
+  PORT: "8290"
+  AUTH_MYSQL_DATABASE: fxa
+  PROFILE_MYSQL_DATABASE: fxa_profile
+  OAUTH_MYSQL_DATABASE: fxa_oath
+  TS_NODE_TRANSPILE_ONLY: 'true'
+  TS_NODE_FILES: 'true'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fxa-graphql-api
+  labels:
+    type: fxa-graphql-api
+spec:
+  selector:
+    matchLabels:
+      app: fxa-graphql-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fxa-graphql-api
+    spec:
+      containers:
+      - name: fxa-graphql-api
+        image: peteroffthestrip/fxa:1.0.4
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: root-configmap
+        - configMapRef:
+            name: fxa-graphql-api-configmap
+        env:
+        - name: AUTH_MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: host
+        - name: AUTH_MYSQL_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: port
+        - name: AUTH_MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: user
+        - name: AUTH_MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+        - name: PROFILE_MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: host
+        - name: PROFILE_MYSQL_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: port
+        - name: PROFILE_MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: user
+        - name: PROFILE_MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+        - name: OAUTH_MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: host
+        - name: OAUTH_MYSQL_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: port
+        - name: OAUTH_MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: user
+        - name: OAUTH_MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fxa-graphql-api-service
+spec:
+  selector:
+    app: fxa-graphql-api
+  ports:
+  - port: 8000
+    targetPort: 8000
+    

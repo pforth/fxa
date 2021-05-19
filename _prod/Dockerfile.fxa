@@ -1,0 +1,45 @@
+FROM ubuntu:latest
+
+WORKDIR /app
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y \
+        git \
+        zip \
+        nano \
+        curl \
+        netcat \
+        iputils-ping \
+        software-properties-common \
+        telnet
+        
+RUN git clone https://github.com/pforth/fxa.git /fxa
+RUN curl -sL https://deb.nodesource.com/setup_14.x |  bash -
+RUN apt-get update && apt-get install -y nodejs
+RUN curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | tee /usr/share/keyrings/yarnkey.gpg >/dev/null
+RUN echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" |  tee /etc/apt/sources.list.d/yarn.list
+RUN apt-get update && apt-get install -y yarn
+RUN npm i -g @nestjs/cli
+RUN npm install -g typescript
+RUN npm install -g grunt
+WORKDIR /fxa/packages/fxa-react
+#RUN yarn install
+#RUN yarn tsc --build
+#RUN yarn build-postcss
+WORKDIR /fxa/packages/fxa-payments-server
+RUN npm install @types/node --save
+# RUN tsc --build ../fxa-react && SKIP_PREFLIGHT_CHECK=true PUBLIC_URL=/ INLINE_RUNTIME_CHUNK=false CI=false rescripts build
+# RUN tsc --build ../fxa-react && NODE_ENV=production grunt build
+WORKDIR /fxa
+RUN yarn install
+WORKDIR /fxa/packages/fxa-react
+#RUN yarn install
+RUN yarn tsc --build
+RUN yarn build-postcss
+WORKDIR /fxa/packages/fxa-content-server
+RUN node scripts/check-local-config && grunt l10n-create-json l10n-generate-tos-pp:app
+WORKDIR /fxa
+
+# EXPOSE 80
+# JPM Brent 702-243-5134
+CMD ./launcher.sh
+

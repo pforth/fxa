@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: ConfigMap 
+metadata:
+  name: fxa-event-broker-configmap 
+data:
+  # Configuration values can be set as key-value properties
+  server: fxa-event-broker
+  TS_NODE_TRANSPILE_ONLY: 'true'
+  TS_NODE_FILES: 'true'
+  WORKER_HOST: '0.0.0.0'
+  PUBSUB_EMULATOR_HOST: 'localhost:8085'
+  FIRESTORE_EMULATOR_HOST: 'localhost:9090'
+  PUBSUB_PROXY_PORT: '8093'
+  IP_HMAC_KEY: akeynoonewillguess
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fxa-event-broker
+  labels:
+    type: fxa-event-broker
+spec:
+  selector:
+    matchLabels:
+      app: fxa-event-broker
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fxa-event-broker
+    spec:
+      containers:
+      - name: fxa-event-broker
+        image: peteroffthestrip/fxa:1.0.4
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: root-configmap
+        - configMapRef:
+            name: fxa-event-broker-configmap
+        env:
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: host
+        - name: MYSQL_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: port
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+        - name: MYSQL_SLAVE_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: host
+        - name: MYSQL_SLAVE_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: port
+        - name: MYSQL_SLAVE_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: user
+        - name: MYSQL_SLAVE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fxa-event-broker-service
+spec:
+  selector:
+    app: fxa-event-broker
+  ports:
+  - port: 8000
+    targetPort: 8000
+    

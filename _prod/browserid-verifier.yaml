@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap 
+metadata:
+  name: browserid-verifier-configmap 
+data:
+  server: browserid-verifier
+  IP_ADDRESS: "0.0.0.0"
+  PORT: "5050"
+  FORCE_INSECURE_LOOKUP_OVER_HTTP: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: browserid-verifier
+  labels:
+    type: browserid-verifier
+spec:
+  selector:
+    matchLabels:
+      app: browserid-verifier
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: browserid-verifier
+    spec:
+      containers:
+      - name: browserid-verifier
+        image: peteroffthestrip/fxa:1.0.4
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: root-configmap
+        - configMapRef:
+            name: browserid-verifier-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: browserid-verifier-service
+spec:
+  selector:
+    app: browserid-verifier
+  ports:
+  - port: 8000
+    targetPort: 8000
+    

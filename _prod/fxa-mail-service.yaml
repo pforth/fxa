@@ -1,0 +1,90 @@
+apiVersion: v1
+kind: ConfigMap 
+metadata:
+  name: fxa-mail-service-configmap 
+data:
+  # Configuration values can be set as key-value properties
+  server: fxa-mail-service
+  HOST: "0.0.0.0"
+  PORT: "8000"
+  IP_HMAC_KEY: akeynoonewillguess
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fxa-mail-service
+  labels:
+    type: fxa-mail-service
+spec:
+  selector:
+    matchLabels:
+      app: fxa-mail-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fxa-mail-service
+    spec:
+      containers:
+      - name: fxa-mail-service
+        image: peteroffthestrip/fxa:1.0.4
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: root-configmap
+        - configMapRef:
+            name: fxa-mail-service-configmap
+        env:
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: host
+        - name: MYSQL_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: port
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+        - name: MYSQL_SLAVE_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: host
+        - name: MYSQL_SLAVE_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: port
+        - name: MYSQL_SLAVE_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: user
+        - name: MYSQL_SLAVE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fxa-mail-service-service
+spec:
+  selector:
+    app: fxa-mail-service
+  ports:
+  - port: 8000
+    targetPort: 8000
+    

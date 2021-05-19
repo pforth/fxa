@@ -1,0 +1,228 @@
+ALL**********
+NODE_ENV development OR production
+
+fxa-profile-server
+AUTH_SERVER_URL http://localhost:9000/v1
+IMG_PROVIDERS_FXA ^http://localhost:1112/a/[0-9a-f]{32}$
+IMG_URL http://localhost:1112/a/{id}
+REDIS_HOST localhost
+REDIS_PORT 6379
+DB mysql
+MYSQL_USERNAME root
+MYSQL_PASSWORD
+MYSQL_DATABASE
+MYSQL_HOST localhost
+MYSQL_PORT 3306
+OAUTH_SERVER_URL http://localhost:9000/v1
+PUBLIC_URL http://localhost:1111
+HOST localhost
+PORT 1111
+WORKER_HOST localhost
+WORKER_PORT 1113
+WORKER_URL http://localhost:1113
+EVENTS_REGION #AWS Region of fxa account events
+EVENTS_QUEUE_URL #SQS queue url for fxa account events
+AUTH_SERVER_MESSAGING_REGION #The region where the queues live
+PROFILE_UPDATES_QUEUE_URL #The queue URL to use (should include https://sqs.<region>.amazonaws.com/<account-id>/<queue-name>)
+IMG_PROVIDERS_FXA ^http://localhost:1112/a/[0-9a-f]{32}$
+
+
+fxa-payments-server
+PUBLIC_URL http://localhost:3031
+USE_TLS false  (https)
+IP_ADDRESS 0.0.0.0
+PORT 3031
+PAYMENT_PRIVACY_NOTICE https://www.mozilla.org/privacy/firefox-private-network
+PAYMENT_TERMS_OF_SERVCIE https://www.mozilla.org/about/legal/terms/firefox-private-network
+PAYMENT_LEGAL_DOWNLOAD_FQDN accounts-static.cdn.mozilla.net
+AUTH_SERVER_URL http://localhost:9000
+CONTENT_SERVER_URL http://localhost:3030
+OAUTH_SERVER_URL http://localhost:9000
+PROFILE_SERVER_URL http://localhost:1111
+FXA_PROFILE_IMAGES_URL http://localhost:1112
+FXA_STATIC_CDN_URL https://accounts-static.cdn.mozilla.net
+SURVEY_GIZMO_EMBED_URL https://www.surveygizmo.com
+STATIC_RESOURCE_URL http://localhost:3031
+DD_AGENT_HOST localhost
+DD_DOGSTATSD_PORT 8125
+PAYPAL_CLIENT_ID
+PAYPAL_API_URL https://www.sandbox.paypal.com
+PAYPAL_SCRIPT_URL https://www.paypal.com
+STRIPE_API_KEY pk_test_VNpCidC0a2TJJB3wqXq7drhN00sF8r9mhs
+STRIPE_API_URL https://api.stripe.com
+STRIPE_HOOKS_URL https://hooks.stripe.com
+STRIPE_SCRIPT_URL https://js.stripe.com
+SENTRY_DSN
+SENTRY_URL https://sentry.prod.mozaws.net/444
+PRODUCT_REDIRECT_URLS
+      '123doneProProduct': 'http://localhost:8080/',
+      fortressProProduct: 'http://localhost:9292/download',
+      prod_FUUNYnlDso7FeB: 'https://fortress-latest.dev.lcip.org/',
+      prod_GqM9ToKK62qjkK: 'https://123done-latest.dev.lcip.org/',
+      // todo get new prod_id for 123done stage
+      prod_FfiuDs9u11ESbD: 'https://123done-stage.dev.lcip.org',
+
+
+fxa-graphql-api
+AUTH_SERVER_URL http://localhost:9000/v1
+CORS_ORIGIN http://accounts.firefox.com/
+CUSTOMS_SERVER_URL http://localhost:7000
+NODE_ENV production
+PROFILE_SERVER_URL http://localhost:1111/v1
+ACCESS_TOKEN_REDIS_HOST localhost
+ACCESS_TOKEN_REDIS_PORT 6379
+PORT 8290
+AUTH_MYSQL_DATABASE fxa
+AUTH_MYSQL_HOST
+AUTH_MYSQL_PASSWORD
+AUTH_MYSQL_PORT
+AUTH_MYSQL_USERNAME
+PROFILE_MYSQL_DATABASE fxa_profile
+PROFILE_MYSQL_HOST
+PROFILE_MYSQL_PASSWORD
+PROFILE_MYSQL_PORT
+OAUTH_MYSQL_USERNAME
+OAUTH_MYSQL_DATABASE fxa_oath
+OAUTH_MYSQL_HOST
+OAUTH_MYSQL_PASSWORD
+OAUTH_MYSQL_PORT
+OAUTH_MYSQL_USERNAME
+TS_NODE_TRANSPILE_ONLY 'true'
+TS_NODE_FILES 'true'
+
+
+fxa-content-server
+FEATURE_FLAGS_REDIS_HOST localhost
+FXA_URL http://localhost:9000
+FXA_GQL_URL http://localhost:8290
+FXA_OAUTH_URL http://localhost:9000
+FXA_PROFILE_IMAGES_URL http://localhost:1112
+FXA_PROFILE_URL http://localhost:1111
+PUBLIC_URL http://localhost:3030
+METRIC_HOST localhost   # StatsD message buffer?
+METRIC_PORT 8125
+SUBSCRIPTIONS_MANAGEMENT_URL http://localhost:3031
+SYNC_TOKENSERVER_URL http://localhost:5000/token
+PORT 3030
+HTTP_PORT 3080
+
+fxa-customs-server
+PUBLIC_URL http://localhost:7000
+IP_ADDRESS localhost
+PORT 7000
+MEMCACHE_ADDRESS localhost:11211
+REPUTATION_SERVICE_BASE_URL http://localhost:8080/
+
+fxa-auth-server
+DB mysql
+MEMCACHE_METRICS_CONTEXT_ADDRESS localhost:11211
+PUBLIC_URL http://localhost:9000
+HOST localhost
+PORT 9000
+HOST_INTERNAL localhost
+PORT_INTERNAL 9011
+SECRET_KEY_FILE
+PUBLIC_KEY_FILE 
+AUTH_MYSQL_DATABASE fxa
+AUTH_MYSQL_HOST
+AUTH_MYSQL_PASSWORD
+AUTH_MYSQL_PORT
+AUTH_MYSQL_USERNAME
+HTTPDB_URL http://localhost:8000
+IP_ADDRESS 0.0.0.0
+TS_NODE_TRANSPILE_ONLY true
+PORT 9000
+CUSTOMS_SERVER_URL http://localhost:7000
+CONTENT_SERVER_URL http://localhost:3030
+EMAIL_SERVICE_HOST localhost
+EMAIL_SERVICE_PORT 8001
+MAILER_HOST
+MAILER_PORT
+SMTP_PORT 25
+SMTP_SECURE false
+SMTP_USER
+SMTP_PASS
+SMTP_SENDER
+REDIRECT_DOMAIN firefox.com
+SUBSCRIPTION_TERMS_URL https://www.mozilla.org/about/legal/terms/firefox-private-network/
+REDIS_HOST localhost
+REDIS_PORT 6379
+ACCESS_TOKEN_REDIS_HOST localhost
+ACCESS_TOKEN_REDIS_PORT 6379
+REFRESH_TOKEN_REDIS_HOST localhost
+REFRESH_TOKEN_REDIS_PORT 6379
+OAUTH_URL http://localhost:9000
+AUTH_SERVER_URL http://localhost:9000
+ISSUER api.accounts.firefox.com
+VERIFICATION_URL https://verifier.accounts.firefox.com/v2
+MYSQL_DATABASE fxa_oauth
+MYSQL_HOST
+MYSQL_PASSWORD
+MYSQL_PORT 3306
+MYSQL_USERNAME root
+DD_AGENT_HOST localhost #StatsD host to report to
+DD_DOGSTATSD_PORT 8125
+SYNC_TOKENSERVER_URL http://localhost:5000/token
+SIGNIN_UNBLOCK_FORCED_EMAILS ^block.*@restmail\\.net$
+SIGNIN_CONFIRMATION_ENABLED true
+SIGNIN_CONFIRMATION_FORCE_EMAIL_REGEX ^sync.*@restmail\\.net$
+FORCE_PASSWORD_CHANGE_EMAIL_REGEX forcepwdchange
+
+fxa-auth-db-mysql
+HOST localhost
+PORT 8000
+MYSQL_HOST localhost
+MYSQL_PASSWORD
+MYSQL_PORT 3306
+MYSQL_USERNAME root
+MYSQL_SLAVE_HOST localhost
+MYSQL_SLAVE_PASSWORD
+MYSQL_SLAVE_PORT 3306
+MYSQL_SLAVE_USERNAME root
+IP_HMAC_KEY changeme
+
+browserid-verifier
+IP_ADDRESS 0.0.0.0
+PORT 5050
+FORCE_INSECURE_LOOKUP_OVER_HTTP true
+
+fxa-mail-service == HARD> RUST
+
+fortress
+PORT 9292
+NODE_ENV production
+CONFIG_FORTRESS ./config.json
+
+
+
+export HOST=0.0.0.0
+export PORT=8000
+export MYSQL_HOST=mysql-fxa-do-user-7415344-0.b.db.ondigitalocean.com
+export MYSQL_PASSWORD=yfitt009a9uvh8di
+export MYSQL_PORT=25060
+export MYSQL_USER=doadmin
+export MYSQL_SLAVE_HOST=mysql-fxa-do-user-7415344-0.b.db.ondigitalocean.com
+export MYSQL_SLAVE_PASSWORD=yfitt009a9uvh8di
+export MYSQL_SLAVE_PORT=25060
+export MYSQL_SLAVE_USERNAME=doadmin
+
+export HOST=0.0.0.0
+export PORT=8000
+export MYSQL_HOST=mysql-fxa-do-user-7415344-0.b.db.ondigitalocean.com
+export MYSQL_PASSWORD=ha4kx1hmni19326q
+export MYSQL_PORT=25060
+export MYSQL_USER=fxa
+export MYSQL_SLAVE_HOST=mysql-fxa-do-user-7415344-0.b.db.ondigitalocean.com
+export MYSQL_SLAVE_PASSWORD=ha4kx1hmni19326q
+export MYSQL_SLAVE_PORT=25060
+export MYSQL_SLAVE_USERNAME=fxa
+
+
+
+
+
+
+
+
+
+

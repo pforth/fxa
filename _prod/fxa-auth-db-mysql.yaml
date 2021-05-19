@@ -1,0 +1,90 @@
+apiVersion: v1
+kind: ConfigMap 
+metadata:
+  name: fxa-auth-db-mysql-configmap 
+data:
+  # Configuration values can be set as key-value properties
+  server: fxa-auth-db-mysql
+  HOST: "0.0.0.0"
+  PORT: "8000"
+  IP_HMAC_KEY: akeynoonewillguess
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fxa-auth-db-mysql
+  labels:
+    type: fxa-auth-db-mysql
+spec:
+  selector:
+    matchLabels:
+      app: fxa-auth-db-mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fxa-auth-db-mysql
+    spec:
+      containers:
+      - name: fxa-auth-db-mysql
+        image: peteroffthestrip/fxa:1.0.4
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: root-configmap
+        - configMapRef:
+            name: fxa-auth-db-mysql-configmap
+        env:
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: host
+        - name: MYSQL_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: port
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+        - name: MYSQL_SLAVE_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: host
+        - name: MYSQL_SLAVE_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: port
+        - name: MYSQL_SLAVE_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: user
+        - name: MYSQL_SLAVE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fxa-auth-db-mysql-service
+spec:
+  selector:
+    app: fxa-auth-db-mysql
+  ports:
+  - port: 8000
+    targetPort: 8000
+    

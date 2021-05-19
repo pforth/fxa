@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: ConfigMap 
+metadata:
+  name: fxa-profile-server-configmap 
+data:
+  # Configuration values can be set as key-value properties
+  server: fxa-profile-server
+  AUTH_SERVER_URL: http://fxa-auth-server-service:9000/v1
+  IMG_PROVIDERS_FXA: ^http://fxa-auth-server-service:1112/a/[0-9a-f]{32}$
+  IMG_URL: http://fxa-auth-server-service:1112/a/{id}
+  REDIS_HOST: redis-service
+  REDIS_PORT: "6379"
+  DB: mysql
+  OAUTH_SERVER_URL: http://fxa-auth-server-service:9000/v1
+  PUBLIC_URL: http://fxa-auth-server-service:1111
+  HOST: "0.0.0.0"
+  PORT: "1111"
+  WORKER_HOST: "0.0.0.0"
+  WORKER_PORT: "1113"
+  WORKER_URL: http://fxa-auth-server-service:1113
+  AWS_ACCESS_KEY_ID: AKIATDJGRIWMGNMG4GRR
+  AWS_SECRET_ACCESS_KEY: "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"
+  EVENTS_REGION: us-west-2
+  EVENTS_QUEUE_URL: https://sqs.us-west-2.amazonaws.com/213218575768/fxa-profile-server-events.fifo
+  PROFILE_UPDATES_REGION: us-west-2
+  PROFILE_UPDATES_QUEUE_URL: https://sqs.us-west-2.amazonaws.com/213218575768/fxa-profile-server-profile.fifo
+  AUTH_SERVER_MESSAGING_REGION: us-west-2
+  AUTH_SERVER_UPDATES_QUEUE_URL: https://sqs.us-west-2.amazonaws.com/213218575768/fxa-profile-server-auth.fifo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fxa-profile-server
+  labels:
+    type: fxa-profile-server
+spec:
+  selector:
+    matchLabels:
+      app: fxa-profile-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fxa-profile-server
+    spec:
+      containers:
+      - name: fxa-profile-server
+        image: peteroffthestrip/fxa:1.0.4
+        ports:
+        - containerPort: 1111
+        envFrom:
+        - configMapRef:
+            name: root-configmap
+        - configMapRef:
+            name: fxa-profile-server-configmap
+        env:
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: host
+        - name: MYSQL_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: port
+        - name: MYSQL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fxa-profile-server-service
+spec:
+  selector:
+    app: fxa-profile-server
+  ports:
+  - port: 1111
+    targetPort: 1111
+    

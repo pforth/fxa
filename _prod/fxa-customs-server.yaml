@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ConfigMap 
+metadata:
+  name: fxa-customs-server-configmap 
+data:
+  # Configuration values can be set as key-value properties
+  server: fxa-customs-server
+  PUBLIC_URL: "http://fxa-customs-server-service:7000"
+  PORT: "7000"
+  MEMCACHE_ADDRESS: memcache-service:11211
+  REPUTATION_SERVICE_BASE_URL: http://service-123done:8080/
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fxa-customs-server
+  labels:
+    type: fxa-customs-server
+spec:
+  selector:
+    matchLabels:
+      app: fxa-customs-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fxa-customs-server
+    spec:
+      containers:
+      - name: fxa-customs-server
+        image: peteroffthestrip/fxa:1.0.4
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: root-configmap
+        - configMapRef:
+            name: fxa-customs-server-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fxa-customs-server-service
+spec:
+  selector:
+    app: fxa-customs-server
+  ports:
+  - port: 8000
+    targetPort: 8000
+    

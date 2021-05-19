@@ -1,0 +1,132 @@
+apiVersion: v1
+kind: ConfigMap 
+metadata:
+  name: fxa-auth-server-configmap 
+data:
+  # Configuration values can be set as key-value properties
+  server: fxa-auth-server
+  DB: mysql
+  MEMCACHE_METRICS_CONTEXT_ADDRESS: memcache-service:11211
+  PUBLIC_URL: http://localhost:9000
+  HOST: "0.0.0.0"
+  PORT: "9000"
+  HOST_INTERNAL: localhost
+  PORT_INTERNAL: "9011"
+  SECRET_KEY_FILE: ""
+  PUBLIC_KEY_FILE: ""
+  AUTH_MYSQL_DATABASE: fxa
+  HTTPDB_URL: http://localhost:8000
+  IP_ADDRESS: "0.0.0.0"
+  TS_NODE_TRANSPILE_ONLY: "true"
+  PORT: "9000"
+  CUSTOMS_SERVER_URL: http://localhost:7000
+  CONTENT_SERVER_URL: http://localhost:3030
+  EMAIL_SERVICE_HOST: fxa-mail-service
+  EMAIL_SERVICE_PORT: "8001"
+  MAILER_HOST: ""
+  MAILER_PORT: ""
+  SMTP_PORT: "25"
+  SMTP_SECURE: "false"
+  SMTP_USER: ""
+  SMTP_PASS: ""
+  SMTP_SENDER: ""
+  REDIRECT_DOMAIN: waterfox.firefox.com
+  SUBSCRIPTION_TERMS_URL: https://www.mozilla.org/about/legal/terms/firefox-private-network/
+  REDIS_HOST: redis-service
+  REDIS_PORT: "6379"
+  ACCESS_TOKEN_REDIS_HOST: redis-service
+  ACCESS_TOKEN_REDIS_PORT: "6379"
+  REFRESH_TOKEN_REDIS_HOST: redis-service
+  REFRESH_TOKEN_REDIS_PORT: "6379"
+  OAUTH_URL: http://fxa-auth-service:9000
+  AUTH_SERVER_URL: http://fxa-auth-service:9000
+  ISSUER: waterfox.api.accounts.firefox.com
+  VERIFICATION_URL: https://waterfox.verifier.accounts.firefox.com/v2
+  MYSQL_DATABASE: fxa_oauth
+  DD_AGENT_HOST: localhost #StatsD host to report to
+  DD_DOGSTATSD_PORT: "8125"
+  SYNC_TOKENSERVER_URL: http://fxa-sync-sercive:5000/token
+  SIGNIN_UNBLOCK_FORCED_EMAILS: ^block.*@restmail\\.net$
+  SIGNIN_CONFIRMATION_ENABLED: "true"
+  SIGNIN_CONFIRMATION_FORCE_EMAIL_REGEX: ^sync.*@restmail\\.net$
+  FORCE_PASSWORD_CHANGE_EMAIL_REGEX: forcepwdchange
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fxa-auth-server
+  labels:
+    type: fxa-auth-server
+spec:
+  selector:
+    matchLabels:
+      app: fxa-auth-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fxa-auth-server
+    spec:
+      containers:
+      - name: fxa-auth-server
+        image: peteroffthestrip/fxa:1.0.4
+        ports:
+        - containerPort: 9000
+        envFrom:
+        - configMapRef:
+            name: root-configmap
+        - configMapRef:
+            name: fxa-auth-server-configmap
+        env:
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: host
+        - name: MYSQL_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: port
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+        - name: AUTH_MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: host
+        - name: AUTH_MYSQL_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: port
+        - name: AUTH_MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: user
+        - name: AUTH_MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fxa-auth-service
+spec:
+  selector:
+    app: fxa-auth-server
+  ports:
+  - port: 9000
+    targetPort: 9000
+    

@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap 
+metadata:
+  name: 123done-configmap 
+data:
+  # Configuration values can be set as key-value properties
+  server: 123done
+  CONFIG_123DONE: "./config-cluster.json"
+  REDIS_HOST: redis-service
+  PORT : "8080"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: 123done
+  labels:
+    type: 123done
+spec:
+  selector:
+    matchLabels:
+      app: 123done
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: 123done
+    spec:
+      containers:
+      - name: 123done
+        image: peteroffthestrip/fxa:1.0.4
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: root-configmap
+        - configMapRef:
+            name: 123done-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-123done
+spec:
+  selector:
+    app: 123done
+  ports:
+  - port: 8080
+    targetPort: 8080

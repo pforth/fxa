@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fxa-profile-server-static
+  labels:
+    type: fxa-profile-server-static
+spec:
+  selector:
+    matchLabels:
+      app: fxa-profile-server-static
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fxa-profile-server-static
+    spec:
+      containers:
+      - name: fxa-profile-server-static
+        image: peteroffthestrip/fxa:1.0.4
+        ports:
+        - containerPort: 1112
+        envFrom:
+        - configMapRef:
+            name: root-configmap
+        - configMapRef:
+            name: fxa-profile-server-configmap
+        env:
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: host
+        - name: MYSQL_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: port
+        - name: MYSQL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fxa-profile-service-static
+spec:
+  selector:
+    app: fxa-profile-server-static
+  ports:
+  - port: 1112
+    targetPort: 1112
+    

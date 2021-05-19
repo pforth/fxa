@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ConfigMap 
+metadata:
+  name: fxa-content-server-configmap 
+data:
+  # Configuration values can be set as key-value properties
+  server: fxa-content-server
+  FEATURE_FLAGS_REDIS_HOST: redis-service
+  FXA_URL: http://fxa-auth-service:9000
+  FXA_GQL_URL: http://fxa-graphql-service:8290
+  FXA_OAUTH_URL: http://fxa-auth-service:9000
+  FXA_PROFILE_IMAGES_URL: http://fxa-profile-service-static:1112
+  FXA_PROFILE_URL: http://fxa-profile-service:1111
+  PUBLIC_URL: http://fxa-content-service:3030
+  METRIC_HOST: localhost   # StatsD message buffer?
+  METRIC_PORT: "8125"
+  SUBSCRIPTIONS_MANAGEMENT_URL: http://fxa-payments-server:3031
+  SYNC_TOKENSERVER_URL: http://fxa-sync:5000/token
+  PORT: "3030"
+  HTTP_PORT: "3080"  # Not sure if this is used
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fxa-content-server
+  labels:
+    type: fxa-content-server
+spec:
+  selector:
+    matchLabels:
+      app: fxa-content-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fxa-content-server
+    spec:
+      containers:
+      - name: fxa-content-server
+        image: peteroffthestrip/fxa:1.0.4
+        ports:
+        - containerPort: 3030
+        envFrom:
+        - configMapRef:
+            name: root-configmap
+        - configMapRef:
+            name: fxa-content-server-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fxa-content-server-service
+spec:
+  selector:
+    app: fxa-content-server
+  ports:
+  - port: 3030
+    targetPort: 3030
+    
