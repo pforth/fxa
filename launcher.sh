@@ -33,11 +33,18 @@ else
   then
     cd fxa-content-server
 #  debugging?   node --inspect=9130 server/bin/fxa-content-server.js
+    node scripts/check-local-config
+    grunt l10n-create-json l10n-generate-tos-pp:app
     node server/bin/fxa-content-server.js
   elif [ $server = "fxa-customs-server" ]
   then
     cd fxa-customs-server
     node bin/customs_server.js
+  elif [ $server = "fxa-event-broker" ]
+  then
+    cd fxa-event-broker
+    #nest start --debug=9180 --watch
+    nest start
   elif [ $server = "fxa-auth-server" ]
   then
     cd fxa-auth-server
