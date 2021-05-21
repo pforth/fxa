@@ -43,7 +43,7 @@ data:
   ISSUER: waterfox.api.accounts.firefox.com
   VERIFICATION_URL: https://waterfox.verifier.accounts.firefox.com/v2
   MYSQL_DATABASE: fxa_oauth
-  DD_AGENT_HOST: localhost #StatsD host to report to
+  DD_AGENT_HOST: statsd-service
   DD_DOGSTATSD_PORT: "8125"
   SYNC_TOKENSERVER_URL: http://fxa-sync-sercive:5000/token
   SIGNIN_UNBLOCK_FORCED_EMAILS: ^block.*@restmail\\.net$

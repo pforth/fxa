@@ -98,10 +98,11 @@ First you need to connect your local kubectl command line client with your remot
 cd && mkdir .kube
 cd ~/.kube && kubectl --kubeconfig="clustername-kubeconfig.yaml" get nodes
 ```
-Once this is done you can deploy each of our yaml configuration files using a single line.  You should launch the Secrets first (because many of the other objects depend on them:
+Once this is done you can deploy each of our yaml configuration files using a single line.  You should launch the Secrets and root configuration file first (because many of the other objects depend on them:
 ```
 kubectl apply -f mysql-secret.yaml
 kubectl apply -f keys-secret.yaml
+kubectl apply -f root-configmap.yaml
 ```
 Next do the ConfigMap, Deployment and Service for fxa-auth-db-mysql:
 ```
@@ -161,3 +162,7 @@ Once in you will need to examine the yaml file of the server that you want to tr
 There are a few secret keys in ConfigMaps that should be base64ed and placed in keys-secret.yaml
 #### Monitoring & Scaling
 Kubernetes has a host of tools for monitoring the traffic on the servers and launching new pods within each deployment should the traffic spike too high.
+#### DEVENV
+This environment variable is set in the root config to either dev or prod but on further examination some of the servers use those values and others use "development" and "production".
+#### StatsD Server
+A couple of the server's configurations reference a "statsd" server.  This server can talk either on TCP or UDP.  The default ports used seem to indicate that the servers are using UDP.  We have created a StatsD deployment and service using UDP but it has not been tested at this time.

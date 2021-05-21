@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: statsd
+  labels:
+    type: statsd
+spec:
+  selector:
+    matchLabels:
+      app: statsd
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: statsd
+    spec:
+      containers:
+      - name: statsd
+        image: statsd/statsd
+        ports:
+        - containerPort: 8125
+          protocol: UDP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: statsd-service
+spec:
+  selector:
+    app: statsd
+  ports:
+  - port: 8125
+    protocol: UDP
+    targetPort: 8125
+    

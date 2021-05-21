@@ -12,7 +12,7 @@ data:
   FXA_PROFILE_IMAGES_URL: http://fxa-profile-service-static:1112
   FXA_PROFILE_URL: http://fxa-profile-service:1111
   PUBLIC_URL: http://fxa-content-service:3030
-  METRIC_HOST: localhost   # StatsD message buffer?
+  METRIC_HOST: statsd-service
   METRIC_PORT: "8125"
   SUBSCRIPTIONS_MANAGEMENT_URL: http://fxa-payments-server:3031
   SYNC_TOKENSERVER_URL: http://fxa-sync:5000/token
